@@ -1,0 +1,22 @@
+/* Active Navigation Link Styling */
+.nav-main-link.active {
+    background-color: rgba(0, 0, 0, 0.15);
+    border-left: 3px solid #0066cc;
+    padding-left: calc(1rem - 3px);
+}
+
+.nav-main-link.active .nav-main-link-name {
+    font-weight: 600;
+}
+
+/* Dark mode variant */
+.sidebar-dark .nav-main-link.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left-color: #0099ff;
+}
+
+/* Light mode variant */
+.sidebar-light .nav-main-link.active {
+    background-color: rgba(0, 0, 0, 0.08);
+    border-left-color: #004999;
+}
