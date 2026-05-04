@@ -1,4 +1,6 @@
 using Maktabaty.Data;
+using Maktabaty.Services.Implementations;
+using Maktabaty.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Maktabaty
@@ -13,6 +15,9 @@ namespace Maktabaty
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Register Image Service
+            builder.Services.AddScoped<IImageService, ImageService>();
 
             var app = builder.Build();
 

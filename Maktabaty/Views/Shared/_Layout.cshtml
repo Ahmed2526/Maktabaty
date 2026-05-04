@@ -28,6 +28,7 @@
     <!-- OneUI framework -->
     <link rel="stylesheet" id="css-main" href="~/assets/css/oneui.min.css">
     <link rel="stylesheet" href="~/assets/js/plugins/sweetalert2/sweetalert2.min.css">
+    <script src="~/assets/js/setTheme.js"></script>
     <link rel="stylesheet" href="~/css/custom.css">
     @RenderSection("Styles", required: false)
 
@@ -70,16 +71,19 @@
         Core libraries and functionality
         webpack is putting everything together at assets/_js/main/app.js
     -->
-    <script src="~/assets/js/oneui.app.min.js"></script>
-    <script src="~/assets/js/lib/jquery.min.js"></script>
+    <!-- jQuery must be loaded first -->
     <!-- Page JS Plugins -->
+    <script src="~/assets/js/lib/jquery.min.js"></script>
+    <script src="~/assets/js/plugins/bootstrap-notify/bootstrap-notify.min.js"></script>
     <script src="~/assets/js/plugins/chart.js/chart.umd.js"></script>
     <script src="~/assets/js/plugins/sweetalert2/sweetalert2.min.js"></script>
-    <script src="~/assets/js/plugins/bootstrap-notify/bootstrap-notify.min.js"></script>
+    <!-- OneUI App -->
+    <script src="~/assets/js/oneui.app.min.js"></script>
 
     @RenderSection("Scripts", required: false)
 
     <!-- Page JS Code -->
     <script src="~/assets/js/pages/be_pages_dashboard.min.js"></script>
+    <script src="~/js/site.js"></script>
 </body>
 </html>

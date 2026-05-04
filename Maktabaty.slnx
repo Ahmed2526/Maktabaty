@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="Maktabaty/Maktabaty.csproj" />
+  <Project Path="Maktabaty.Application/Maktabaty.Application.csproj" Id="52c1559e-a1a9-47ea-a7d0-b101f39f2c92" />
+  <Project Path="Maktabaty.Domain/Maktabaty.Domain.csproj" Id="3f1b8c07-a55c-4f03-a854-3be15ad3fa87" />
+  <Project Path="Maktabaty.Infrastructure/Maktabaty.Infrastructure.csproj" Id="54a2fc54-0554-4c6f-b805-952c74f0eaae" />
+  <Project Path="Maktabaty/Maktabaty.Web.csproj" />
 </Solution>

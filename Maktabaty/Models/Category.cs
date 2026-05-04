@@ -1,16 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Maktabaty.Models
+﻿namespace Maktabaty.Models
 {
     public class Category
     {
         public int Id { get; set; }
-
-        [MaxLength(250)]
         public string Name { get; set; }
-
         public bool IsDeleted { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }
+
+        // Many-to-many relationship with Book
+        public ICollection<BookCategory> BookCategories { get; set; } = new List<BookCategory>();
     }
 }
