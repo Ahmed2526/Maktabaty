@@ -1,6 +1,6 @@
-using Maktabaty.Data;
-using Maktabaty.Services.Implementations;
-using Maktabaty.Services.Interfaces;
+using Maktabaty.Application.IService;
+using Maktabaty.Application.Services;
+using Maktabaty.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Maktabaty
@@ -18,6 +18,7 @@ namespace Maktabaty
 
             // Register Image Service
             builder.Services.AddScoped<IImageService, ImageService>();
+            builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 
             var app = builder.Build();
 
@@ -44,3 +45,4 @@ namespace Maktabaty
         }
     }
 }
+

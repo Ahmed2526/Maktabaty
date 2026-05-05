@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Maktabaty.Custom_Attributes
 {
-    public class AjaxOnlyAttribute: ActionFilterAttribute
+    public class AjaxOnlyAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
@@ -13,3 +13,4 @@ namespace Maktabaty.Custom_Attributes
         }
     }
 }
+

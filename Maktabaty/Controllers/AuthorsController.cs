@@ -1,8 +1,8 @@
-﻿using Maktabaty.Custom_Attributes;
-using Maktabaty.Data;
-using Maktabaty.Models;
-using Maktabaty.RequestContracts;
-using Maktabaty.ResponseContracts;
+using Maktabaty.Application.RequestContracts;
+using Maktabaty.Application.ResponseContracts;
+using Maktabaty.Custom_Attributes;
+using Maktabaty.Domain.Entities.Models;
+using Maktabaty.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -148,3 +148,4 @@ namespace Maktabaty.Controllers
         }
     }
 }
+

@@ -1,8 +1,9 @@
-﻿using Maktabaty.Custom_Attributes;
-using Maktabaty.Data;
-using Maktabaty.Models;
-using Maktabaty.RequestContracts;
-using Maktabaty.ResponseContracts;
+using Maktabaty.Application.IService;
+using Maktabaty.Application.RequestContracts;
+using Maktabaty.Application.ResponseContracts;
+using Maktabaty.Custom_Attributes;
+using Maktabaty.Domain.Entities.Models;
+using Maktabaty.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,27 +11,19 @@ namespace Maktabaty.Controllers
 {
     public class CategoriesController : Controller
     {
+        private readonly ICategoriesService _categoriesService;
         private readonly ApplicationDbContext _context;
 
-        public CategoriesController(ApplicationDbContext context)
+        public CategoriesController(ApplicationDbContext context, ICategoriesService categoriesService)
         {
             _context = context;
+            _categoriesService = categoriesService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var categories = await _context.Categories
-                .AsNoTracking()
-                .Select(e => new CategoryResponse
-                {
-                    Id = e.Id,
-                    Name = e.Name,
-                    IsDeleted = e.IsDeleted,
-                    CreatedOn = e.CreatedOn,
-                    UpdatedOn = e.UpdatedOn
-                }).ToListAsync();
-
+            var categories = await _categoriesService.GetAllCategoriesAsync();
             return View(categories);
         }
 
@@ -139,7 +132,7 @@ namespace Maktabaty.Controllers
             return Ok();
         }
 
-       public async Task<IActionResult> CheckUnique(string name, int? id)
+        public async Task<IActionResult> CheckUnique(string name, int? id)
         {
             var exists = await _context.Categories
                 .AnyAsync(e => e.Name == name && e.Id != id);

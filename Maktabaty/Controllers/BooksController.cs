@@ -1,7 +1,7 @@
-﻿using Maktabaty.Data;
-using Maktabaty.Models;
-using Maktabaty.RequestContracts;
-using Maktabaty.Services.Interfaces;
+using Maktabaty.Application.IService;
+using Maktabaty.Application.RequestContracts;
+using Maktabaty.Domain.Entities.Models;
+using Maktabaty.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -210,3 +210,4 @@ namespace Maktabaty.Controllers
         }
     }
 }
+

@@ -1,4 +1,4 @@
-using Maktabaty.Models;
+using Maktabaty.Domain.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -23,3 +23,4 @@ namespace Maktabaty.Controllers
         }
     }
 }
+
