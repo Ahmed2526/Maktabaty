@@ -1,0 +1,155 @@
+﻿@model BookResponse
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+@section Styles {
+    <link href="~/my-libraries/lightbox3/dist/lightbox3.min.css" rel="stylesheet" />
+}
+<style>
+
+    .img-fluid {
+        max-width: 60%;
+        height: auto;
+    }
+
+    .book-img {
+        max-height: 400px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+        .book-img:hover {
+            transform: scale(1.03);
+        }
+
+    .description {
+        line-height: 1.7;
+        font-size: 0.95rem;
+    }
+
+    .card-footer {
+        background-color: white;
+    }
+
+    .card-footer .nav-link.copies-link {
+        text-decoration: none;
+        border-bottom: 2px solid #6c757d;
+        padding-bottom: 6px;
+    }
+
+    .card-footer .nav-link.copies-link:hover,
+    .card-footer .nav-link.copies-link.active {
+        border-bottom-color: #0d6efd;
+        color: #0d6efd;
+    }
+</style>
+
+<div class="container card p-5 rounded-3 my-5">
+    <div class="row g-4 align-items-start">
+
+        <!-- 📸 Book Image -->
+        <div class="col-md-4 text-center">
+            <a href="@Model.ImageUrl" data-lightbox >
+                <img src="@Model.ImageUrl" data-lightbox="@Model.ImageUrl"
+                     class="img-fluid rounded shadow-sm book-img"
+                     alt="@Model.Title" />
+            </a>
+        </div>
+
+        <!-- 📖 Book Details -->
+        <div class="col-md-8">
+
+            <!-- Title -->
+            <h2 class="fw-bold mb-1">@Model.Title</h2>
+
+            <!-- Author -->
+            <p class="text-muted mb-3">by @Model.Author</p>
+
+            <!-- Info -->
+            <div class="mb-3">
+                <p class="mb-1"><strong>Publisher:</strong> @Model.Publisher</p>
+                <p class="mb-1">
+                    <strong>Published:</strong>
+                    @Model.PublishingDate.ToString("MMMM dd, yyyy")
+                </p>
+                <p class="mb-1"><strong>Hall:</strong> @Model.Hall</p>
+            </div>
+
+            <!-- Availability -->
+            <div class="mb-3">
+                @if (Model.IsAvailableForRental)
+                {
+                    <span class="badge bg-success px-3 py-2">Available for Rental</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger px-3 py-2">Not Available</span>
+                }
+            </div>
+
+            <!-- Categories -->
+            <div class="mb-3">
+                @foreach (var category in Model.Categories)
+                {
+
+                    <span class="badge rounded-pill me-1 mb-1" style="background:#e9d5ff; color:#6b21a8;">
+                        @category
+                    </span>
+                }
+            </div>
+
+            <!-- Description -->
+            <div class="mb-4">
+                <p class="text-secondary description">
+                    @Model.Description
+                </p>
+            </div>
+
+            <!-- Action Button -->
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary px-4 me-2">Edit</a>
+            <a asp-action="Index" asp-route-id="@Model.Id" class="btn btn-secondary px-2">Back to List</a>
+        </div>
+    </div>
+
+    <div class="card-footer mt-5">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link copies-link btn-alt-primary" aria-current="page" href="#">Copies</a>
+            </li>
+           
+        </ul>
+    </div>
+
+</div>
+
+<div id="copiesSection" class="container card rounded-3 my-5 d-none">
+    <p>Coming soon</p>
+    <p>Coming soon</p>
+    <p>Coming soon</p>
+    <p>Coming soon</p>
+</div>
+
+@section Scripts {
+    <script src="~/my-libraries/lightbox3/dist/lightbox3.min.js"></script>
+    
+
+    <script>
+        // Toggle the visibility of the Copies Section card
+        document.querySelector('.nav-link').addEventListener('click', function (e) {
+            e.preventDefault();
+           $(this).toggleClass('active');
+           $(this).toggleClass('text-white');
+
+            let copiesSection = document.querySelector('#copiesSection');
+            copiesSection.classList.toggle('d-none');
+            if (!copiesSection.classList.contains('d-none')) {
+                copiesSection.setAttribute('tabindex', '-1');
+                copiesSection.focus();
+                copiesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+
+    </script>
+}

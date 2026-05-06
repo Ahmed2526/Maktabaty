@@ -1,5 +1,6 @@
 using Maktabaty.Application.IService;
 using Maktabaty.Application.RequestContracts;
+using Maktabaty.Application.ResponseContracts;
 using Maktabaty.Domain.Entities.Models;
 using Maktabaty.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -24,8 +25,36 @@ namespace Maktabaty.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var book = await _context.Books
+                .Include(b => b.Author)
+                .Include(b => b.BookCategories)
+                    .ThenInclude(bc => bc.Category)
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (book == null)
+                return NotFound();
+
+            var bookResponse = new BookResponse
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Author = book.Author.Name,
+                Publisher = book.Publisher,
+                PublishingDate = book.PublishingDate,
+                ImageUrl = book.ImageUrl!,
+                Hall = book.Hall,
+                IsAvailableForRental = book.IsAvailableForRental,
+                Description = book.Description,
+                Categories = book.BookCategories.Select(bc => bc.Category.Name)
+            };
+
+            return View(bookResponse);
         }
 
         [HttpGet]

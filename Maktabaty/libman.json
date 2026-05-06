@@ -12,6 +12,19 @@
     {
       "library": "jquery-ajax-unobtrusive@3.2.6",
       "destination": "wwwroot/jquery-ajax-unobtrusive/"
+    },
+    {
+      "library": "lightbox2@2.11.5",
+      "destination": "wwwroot/my-libraries/lightbox2/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "lightbox3@1.1.0",
+      "destination": "wwwroot/lightbox3/",
+      "files": [
+        "dist/lightbox3.min.css",
+        "dist/lightbox3.min.js"
+      ]
     }
   ]
 }
