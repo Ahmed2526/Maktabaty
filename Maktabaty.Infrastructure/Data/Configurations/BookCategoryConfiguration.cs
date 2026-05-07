@@ -1,6 +1,7 @@
 using Maktabaty.Domain.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Collections.Generic;
 
 namespace Maktabaty.Infrastructure.Data.Configurations
 {
@@ -20,7 +21,8 @@ namespace Maktabaty.Infrastructure.Data.Configurations
                 .HasForeignKey(bc => bc.CategoryId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasData(
+            var bookCategories = new List<BookCategory>
+            {
                 new BookCategory { BookId = 1, CategoryId = 3 },
                 new BookCategory { BookId = 1, CategoryId = 1 },
                 new BookCategory { BookId = 2, CategoryId = 3 },
@@ -61,7 +63,18 @@ namespace Maktabaty.Infrastructure.Data.Configurations
                 new BookCategory { BookId = 19, CategoryId = 4 },
                 new BookCategory { BookId = 20, CategoryId = 6 },
                 new BookCategory { BookId = 20, CategoryId = 4 }
-            );
+            };
+
+            for (var bookId = 21; bookId <= 100; bookId++)
+            {
+                var primaryCategory = (bookId - 1) % 10 + 1;
+                var secondaryCategory = primaryCategory == 1 ? 2 : 1;
+
+                bookCategories.Add(new BookCategory { BookId = bookId, CategoryId = primaryCategory });
+                bookCategories.Add(new BookCategory { BookId = bookId, CategoryId = secondaryCategory });
+            }
+
+            builder.HasData(bookCategories);
         }
     }
 }

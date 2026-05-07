@@ -1,0 +1,34 @@
+﻿@model BookCopiesRequest
+
+@{
+    ViewData["Title"] = "Add Book Copy";
+}
+
+@{
+    var copyId = ViewBag.CopyId;
+    var action = copyId != null ? "Edit" : "Add";
+}
+
+<form method="POST" asp-action="@action" asp-route-id="@copyId">
+    <input type="hidden" asp-for="BookId" />
+    <div class="row">
+        <div class="col-lg-12 col-xl-12">
+            <div class="form-floating mb-4">
+                <input type="text" class="form-control" asp-for="EditionNumber" placeholder="Edition Number">
+                <label asp-for="EditionNumber"></label>
+                <span asp-validation-for="EditionNumber" class="text-danger mt-2"></span>
+            </div>
+        </div>
+       
+        <div class="form-check mb-3 col-md-12 ms-2">
+            <input class="form-check-input" type="checkbox" asp-for="IsAvailableForRental" id="rentalCheckbox">
+            <label class="form-check-label" for="rentalCheckbox">
+                Is Available For Rental?
+            </label>
+            <span asp-validation-for="IsAvailableForRental" class="text-danger"></span>
+        </div>
+       
+    </div>
+</form>
+
+

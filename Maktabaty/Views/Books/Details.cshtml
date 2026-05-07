@@ -33,17 +33,17 @@
         background-color: white;
     }
 
-    .card-footer .nav-link.copies-link {
-        text-decoration: none;
-        border-bottom: 2px solid #6c757d;
-        padding-bottom: 6px;
-    }
+        .card-footer .nav-link.copies-link {
+            text-decoration: none;
+            border-bottom: 2px solid #6c757d;
+            padding-bottom: 6px;
+        }
 
-    .card-footer .nav-link.copies-link:hover,
-    .card-footer .nav-link.copies-link.active {
-        border-bottom-color: #0d6efd;
-        color: #0d6efd;
-    }
+            .card-footer .nav-link.copies-link:hover,
+            .card-footer .nav-link.copies-link.active {
+                border-bottom-color: #0d6efd;
+                color: #0d6efd;
+            }
 </style>
 
 <div class="container card p-5 rounded-3 my-5">
@@ -51,7 +51,7 @@
 
         <!-- 📸 Book Image -->
         <div class="col-md-4 text-center">
-            <a href="@Model.ImageUrl" data-lightbox >
+            <a href="@Model.ImageUrl" data-lightbox>
                 <img src="@Model.ImageUrl" data-lightbox="@Model.ImageUrl"
                      class="img-fluid rounded shadow-sm book-img"
                      alt="@Model.Title" />
@@ -85,7 +85,7 @@
                 }
                 else
                 {
-                    <span class="badge bg-danger px-3 py-2">Not Available</span>
+                    <span class="badge bg-warning px-3 py-2">Not Available for Rental</span>
                 }
             </div>
 
@@ -125,31 +125,319 @@
 </div>
 
 <div id="copiesSection" class="container card rounded-3 my-5 d-none">
-    <p>Coming soon</p>
-    <p>Coming soon</p>
-    <p>Coming soon</p>
-    <p>Coming soon</p>
-</div>
+    @Html.AntiForgeryToken()
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <h3>Copies</h3>
+        <a href="javascript:;" onclick="showModalAdd()" class="btn btn-primary d-inline-flex align-items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle me-2" viewBox="0 0 16 16" style="vertical-align: middle;">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+            </svg>
+            Add
+        </a>
+    </div>
+    <hr />
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Serial Number</th>
+                    <th scope="col">Edition Number</th>
+                    <th scope="col">Availablity "for rental"</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var copy in Model.Copies)
+                {
+                    <tr data-copy-id="@copy.Id">
+                        <td>@copy.SerialNumber</td>
+                        <td>@copy.EditionNumber</td>
+                        <td>
+                            @if (copy.IsAvailableForRental)
+                            {
+                                <span class="badge bg-success">Available</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning">Not Available</span>
+                            }
+                        </td>
+                        <td>
+                            @if (copy.IsDeleted)
+                            {
+                                <span class="badge bg-danger">Deleted</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Available</span>
+                            }
+                        
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <a href="javascript:;" onclick="showModalEdit(@copy.Id)" class="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled" data-bs-toggle="tooltip" aria-label="Edit" data-bs-original-title="Edit">
+                                        <i class="fa fa-fw fa-pencil-alt"></i>
+                                    </a>
 
-@section Scripts {
-    <script src="~/my-libraries/lightbox3/dist/lightbox3.min.js"></script>
-    
+                                    <a href="javascript:;" onclick="toggleStatus(@copy.Id)" class="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled" data-bs-toggle="tooltip" aria-label="Delete" data-bs-original-title="Delete">
+                                        <i class="fa fa-fw fa-times"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        
+                        </tr>
+                    }
+                </tbody>
+            </table>
 
-    <script>
-        // Toggle the visibility of the Copies Section card
-        document.querySelector('.nav-link').addEventListener('click', function (e) {
-            e.preventDefault();
-           $(this).toggleClass('active');
-           $(this).toggleClass('text-white');
+        </div>
+    </div>
 
-            let copiesSection = document.querySelector('#copiesSection');
-            copiesSection.classList.toggle('d-none');
-            if (!copiesSection.classList.contains('d-none')) {
-                copiesSection.setAttribute('tabindex', '-1');
-                copiesSection.focus();
-                copiesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    @section Scripts {
+        <script src="~/my-libraries/lightbox3/dist/lightbox3.min.js"></script>
+        <partial name="_ValidationScriptsPartialAjax" />
+
+        <script>
+            // Toggle the visibility of the Copies Section card
+            document.querySelector('.nav-link').addEventListener('click', function (e) {
+                e.preventDefault();
+               $(this).toggleClass('active');
+               $(this).toggleClass('text-white');
+
+                let copiesSection = document.querySelector('#copiesSection');
+                copiesSection.classList.toggle('d-none');
+                if (!copiesSection.classList.contains('d-none')) {
+                    copiesSection.setAttribute('tabindex', '-1');
+                    copiesSection.focus();
+                    copiesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+
+            var bootstrapModal;
+
+            function showModalAdd() {
+            //show the modal
+            var modal = document.querySelector('#Modal');
+            bootstrapModal = new bootstrap.Modal(modal);
+            var modalTitle = document.getElementById('ModalLabel');
+            modalTitle.textContent = 'Add Copy';
+
+                $.ajax({
+                url: '/BookCopies/Add?bookId=' + @Model.Id,
+                type: 'GET',
+                success: function (response) {
+                    $('#modalbody').html(response);
+                    // Initialize jQuery validation on the dynamically loaded form
+                    var form = modal.querySelector('form');
+                    if (form && $.validator) {
+                        $.validator.unobtrusive.parse(form);
+                    }
+                    bootstrapModal.show();
+                },
+                error: function () {
+                   modal.querySelector('.modal-body').innerHTML = '<div class="alert alert-danger">An error occurred while loading the form.</div>';
+                }
+            });
             }
-        });
 
-    </script>
-}
+            function submitModalForm(){
+                var modal = document.querySelector('#Modal');
+                var form = modal.querySelector('form');
+                var $form = $(form);
+
+                if (!$form.valid()) {
+                    return;
+                }
+
+                var validator = $form.data('validator');
+                if (validator && validator.pendingRequest) {
+                    setTimeout(function() {
+                        submitModalForm();
+                    }, 100);
+                    return;
+                }
+
+                if (!$form.valid()) {
+                    return;
+                }
+
+                var btn = document.querySelector('#modalSaveButton');
+                btn.classList.add('disabled');
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+                var formData = new FormData(form);
+                $.ajax({
+                    url: form.action,
+                    type: form.method,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (response) {
+                        btn.classList.remove('disabled');
+                        btn.innerHTML = 'Save';
+
+                        if (response.success) {
+                            bootstrapModal.hide();
+
+                            var copy = response.copy;
+                            var existingRow = document.querySelector(`tr[data-copy-id="${copy.id}"]`);
+
+                            if (existingRow) {
+                                existingRow.innerHTML = `
+                                    <td>${copy.serialNumber}</td>
+                                    <td>${copy.editionNumber}</td>
+                                    <td>
+                                        ${copy.isAvailableForRental ? '<span class="badge bg-success">Available</span>' : '<span class="badge bg-warning">Not Available</span>'}
+                                    </td>
+                                    <td>
+                                        ${copy.isDeleted ? '<span class="badge bg-danger">Deleted</span>' : '<span class="badge bg-success">Available</span>'}
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <a href="javascript:;" onclick="showModalEdit(${copy.id})" class="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled" data-bs-toggle="tooltip" aria-label="Edit" data-bs-original-title="Edit">
+                                                <i class="fa fa-fw fa-pencil-alt"></i>
+                                            </a>
+                                            <a href="javascript:;" onclick="toggleStatus(${copy.id})" class="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled" data-bs-toggle="tooltip" aria-label="Delete" data-bs-original-title="Delete">
+                                                <i class="fa fa-fw fa-times"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                `;
+
+                                Swal.fire({
+                                    title: "Copy updated successfully!",
+                                    icon: "success",
+                                    draggable: false
+                                });
+                                One.helpers('jq-notify', {type: 'success', icon: 'fa fa-check me-1', message: 'Copy updated!'});
+                            } else {
+                                var tableBody = document.querySelector('#copiesSection tbody');
+                                if (!tableBody) {
+                                    tableBody = document.createElement('tbody');
+                                    document.querySelector('#copiesSection table').appendChild(tableBody);
+                                }
+
+                                var newRow = document.createElement('tr');
+                                newRow.setAttribute('data-copy-id', copy.id);
+                                newRow.innerHTML = `
+                                    <td>${copy.serialNumber}</td>
+                                    <td>${copy.editionNumber}</td>
+                                    <td>
+                                        ${copy.isAvailableForRental ? '<span class="badge bg-success">Available</span>' : '<span class="badge bg-warning">Not Available</span>'}
+                                    </td>
+                                    <td>
+                                        ${copy.isDeleted ? '<span class="badge bg-danger">Deleted</span>' : '<span class="badge bg-success">Available</span>'}
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <a href="javascript:;" onclick="showModalEdit(${copy.id})" class="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled" data-bs-toggle="tooltip" aria-label="Edit" data-bs-original-title="Edit">
+                                                <i class="fa fa-fw fa-pencil-alt"></i>
+                                            </a>
+                                            <a href="javascript:;" onclick="toggleStatus(${copy.id})" class="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled" data-bs-toggle="tooltip" aria-label="Delete" data-bs-original-title="Delete">
+                                                <i class="fa fa-fw fa-times"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                `;
+
+                                tableBody.insertBefore(newRow, tableBody.firstChild);
+
+                                Swal.fire({
+                                    title: "Copy added successfully!",
+                                    icon: "success",
+                                    draggable: false
+                                });
+
+                                One.helpers('jq-notify', {type: 'success', icon: 'fa fa-check me-1', message: 'Copy added!'});
+                            }
+                        } else {
+                            modal.querySelector('.modal-body').innerHTML = response;
+                            $.validator.unobtrusive.parse(form);
+                        }
+                    },
+                    error: function () {
+                        btn.classList.remove('disabled');
+                        btn.innerHTML = 'Save';
+                        modal.querySelector('.modal-body').innerHTML = '<div class="alert alert-danger">An error occurred while submitting the form.</div>';
+                    }
+                });
+            }
+
+            function showModalEdit(copyId) {
+                var modal = document.querySelector('#Modal');
+                bootstrapModal = new bootstrap.Modal(modal);
+                var modalTitle = document.getElementById('ModalLabel');
+                modalTitle.textContent = 'Edit Copy';
+
+                $.ajax({
+                    url: '/BookCopies/Edit/' + copyId,
+                    type: 'GET',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (response) {
+                        $('#modalbody').html(response);
+                        var form = modal.querySelector('form');
+                        if (form && $.validator) {
+                            $.validator.unobtrusive.parse(form);
+                        }
+                        bootstrapModal.show();
+                    },
+                    error: function () {
+                        modal.querySelector('.modal-body').innerHTML = '<div class="alert alert-danger">An error occurred while loading the form.</div>';
+                    }
+                });
+            }
+
+            function toggleStatus(copyId) {
+                var row = document.querySelector(`tr[data-copy-id="${copyId}"]`);
+                if (!row) {
+                    return;
+                }
+
+                Swal.fire({
+                    title: "Are you sure you want to do this?",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    cancelButtonText: "No",
+                     confirmButtonColor: "#dc3545" // Bootstrap danger red
+                }).then((result) => {
+                    if (!result.isConfirmed) {
+                        return;
+                    }
+
+                   Swal.fire("Saved!", "", "success");
+
+                    $.ajax({
+                        url: '/BookCopies/ToggleStatus/' + copyId,
+                        type: 'POST',
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function (response) {
+                            if (!response.success) {
+                                return;
+                            }
+
+                            var statusCell = row.querySelector('td:nth-child(4)');
+                            if (response.isDeleted) {
+                                statusCell.innerHTML = '<span class="badge bg-danger">Deleted</span>';
+                            } else {
+                                statusCell.innerHTML = '<span class="badge bg-success">Available</span>';
+                            }
+
+                            One.helpers('jq-notify', {type: 'success', icon: 'fa fa-check me-1', message: 'Status updated!'});
+                        },
+                        error: function () {
+                            One.helpers('jq-notify', {type: 'danger', icon: 'fa fa-times me-1', message: 'Failed to update status.'});
+                        }
+                    });
+                });
+            }
+
+        </script>
+    }

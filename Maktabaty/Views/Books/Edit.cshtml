@@ -215,7 +215,7 @@
                             </svg>
                             <p id="placeholder-text">No image selected</p>
                         </div>
-                        <img id="image-preview" src="#" alt="Book Cover Preview">
+                        <img id="image-preview" src="@Model.ImageUrl" alt="Book Cover Preview">
                     </div>
                 </div>
                 <span class="d-block text-info mt-2">File size must be less than 5mb.</span>
@@ -262,7 +262,8 @@
 
             // Show existing image on page load
             if (existingImage) {
-                imagePreview.src = '/images/' + existingImage;
+                imagePreview.src = existingImage;
+               // imagePreview.src = '/images/' + existingImage;
                 imagePreview.style.display = 'block';
                 imagePlaceholder.style.display = 'none';
             } else {

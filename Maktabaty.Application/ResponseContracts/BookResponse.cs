@@ -15,6 +15,7 @@ namespace Maktabaty.Application.ResponseContracts
         public string Description { get; set; }
 
         public IEnumerable<string> Categories { get; set; }
+        public IEnumerable<BookCopiesResponse> Copies { get; set; }
     }
 }
 

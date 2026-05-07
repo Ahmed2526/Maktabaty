@@ -14,9 +14,14 @@ namespace Maktabaty.Domain.Entities.Models
         public string Hall { get; set; }
         public bool IsAvailableForRental { get; set; }
         public string Description { get; set; }
+        public bool IsDeleted { get; set; }
+        public DateTime UpdatedOn { get; set; }
 
         // Many-to-many relationship with Category
         public ICollection<BookCategory> BookCategories { get; set; } = new List<BookCategory>();
+
+        // One-to-many relationship with BookCopy
+        public ICollection<BookCopy> BookCopies { get; set; } = new List<BookCopy>();
     }
 }
 

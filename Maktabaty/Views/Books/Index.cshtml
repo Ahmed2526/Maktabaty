@@ -5,12 +5,12 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/assets/js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
 }
 
 <div class="container card shadow-sm p-3">
     <div class="d-flex justify-content-between align-items-center mt-4">
-        <h3>Authors</h3>
+        <h3>Books</h3>
         <a asp-action="Add" class="btn btn-primary d-inline-flex align-items-center">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle me-2" viewBox="0 0 16 16" style="vertical-align: middle;">
                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
@@ -19,52 +19,145 @@
             Add
         </a>
     </div>
+
+@Html.AntiForgeryToken()
     <hr />
 
-    <table class="table table-bordered table-hover table-vcenter js-dataTable-full">
+    <table id="booksTable" class="table table-bordered table-hover table-vcenter ">
         <thead>
             <tr>
-                <th style="width:50px">#</th>
-                <th>Name</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Publisher</th>
+                <th>Publishing Date</th>
+                <th>Available for rental</th>
                 <th>Status</th>
-                <th>Created On</th>
-                <th>Last Updated On</th>
-
-                <th style="width:180px">Actions</th>
+                <th class="text-center">Actions</th>
             </tr>
         </thead>
         <tbody>
-            
         </tbody>
     </table>
+    
 </div>
-
-
-
-
-
 
 
 @section Scripts {
     <!-- Page JS Plugins -->
-    <partial name="_ValidationScriptsPartial" />
-    <script src="~/assets/js/plugins/datatables/dataTables.min.js"></script>
-    <script src="~/assets/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js"></script>
-    <script src="~/assets/js/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="~/assets/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
-    <script src="~/assets/js/plugins/datatables-buttons/dataTables.buttons.min.js"></script>
-    <script src="~/assets/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
-    <!-- Page JS Code -->
-    <script src="~/assets/js/pages/be_tables_datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 
     @{
         if (TempData["SuccessMessage"] != null)
         {
             <script>
                 $(document).ready(function() {
-                   One.helpers('jq-notify', {type: 'success', icon: 'fa fa-check me-1', message: '@TempData["SuccessMessage"]'});
+                One.helpers('jq-notify', {type: 'success', icon: 'fa fa-check me-1', message: '@TempData["SuccessMessage"]'});
                 });
             </script>
         }
     }
+
+    <script>
+        $(document).ready(function () {
+
+        $('#booksTable').DataTable({
+
+        processing: true,
+        serverSide: true,
+        stateSave: true,
+
+        ajax: {
+        url: '/Books/GetBooks',
+        type: 'POST'
+        },
+
+        columns: [
+            {
+                data: 'title',
+                orderable: true,
+                searchable: true,
+                render: function (data, type, row) {
+                    const image = row.image
+                            ? `<img src="${row.image}" alt="Book Image" style="width: 35px; height: auto;" class="me-2" />`
+                        : '';
+                         return `<div class="d-flex align-items-center"><a href="/Books/Details/${row.id}">${image}<span>${data}</span></a></div>`;
+                }
+            },
+        { data: 'author', orderable: true, searchable: true },
+        { data: 'publisher', orderable: false, searchable: false },
+        { data: 'publishingDate', orderable:true, searchable: false },
+            {
+                data: 'isAvailableForRental',
+                orderable: false,
+                searchable: false,
+                render: function (data, type, row) {
+                    if (data) {
+                        return '<span class="badge bg-success">Available</span>';
+                    }
+
+                    return '<span class="badge bg-warning">Not Available</span>';
+                }
+            },
+            {
+                data: 'isDeleted',
+                orderable: false,
+                searchable: false,
+                render: function (data, type, row) {
+                    if (data) {
+                        return '<span class="badge bg-danger">Deleted</span>';
+                    }
+                     else {
+                    return '<span class="badge bg-success">Active</span>';
+                }}
+            },
+            {
+                data: 'id',
+                name: 'Actions',
+                orderable: false,
+                searchable: false,
+                className: 'text-center',
+                render: function (data, type, row) {
+                    return `
+        <div class="btn-group">
+        <a href="/Books/Edit/${row.id}" class="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled" data-bs-toggle="tooltip" aria-label="Edit" data-bs-original-title="Edit">
+        <i class="fa fa-fw fa-pencil-alt"></i>
+        </a>
+
+        <a href="javascript:;" onclick="toggleStatus(${row.id})" class="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled" data-bs-toggle="tooltip" aria-label="Delete" data-bs-original-title="Delete">
+        <i class="fa fa-fw fa-times"></i>
+        </a>
+        </div>`;
+                }
+            }
+        ]});});
+
+        function toggleStatus(id) {
+            Swal.fire({
+                title: "Are you sure you want to change the status?",
+                showDenyButton: true,
+                showCancelButton: false,
+                confirmButtonText: "Yes",
+                denyButtonText: "No",
+                confirmButtonColor: "#dc3545",
+                denyButtonColor: "#6c757d"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Books/ToggleStatus',
+                        type: 'POST',
+                        data: { id: id, __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() },
+                        success: function () {
+                            $('#booksTable').DataTable().ajax.reload(null, false);
+                            Swal.fire("Done!", "", "success");
+                            One.helpers('jq-notify', { type: 'success', icon: 'fa fa-check me-1', message: 'Book status updated!' });
+                        },
+                        error: function () {
+                            Swal.fire("Error!", "An error occurred while toggling the status.", "error");
+                        }
+                    });
+                }
+            });
+        }
+
+    </script>
 }

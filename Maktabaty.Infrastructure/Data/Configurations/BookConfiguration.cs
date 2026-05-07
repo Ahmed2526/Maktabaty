@@ -1,6 +1,7 @@
 using Maktabaty.Domain.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Collections.Generic;
 
 namespace Maktabaty.Infrastructure.Data.Configurations
 {
@@ -47,7 +48,8 @@ namespace Maktabaty.Infrastructure.Data.Configurations
                 .HasForeignKey(bc => bc.BookId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasData(
+            var books = new List<Book>
+            {
                 new Book
                 {
                     Id = 1,
@@ -288,7 +290,25 @@ namespace Maktabaty.Infrastructure.Data.Configurations
                     IsAvailableForRental = true,
                     Description = "Robert Langdon investigates a conspiracy involving the Illuminati and the Vatican."
                 }
-            );
+            };
+
+            for (var i = 21; i <= 100; i++)
+            {
+                books.Add(new Book
+                {
+                    Id = i,
+                    Title = $"Sample Book {i}",
+                    AuthorId = (i - 1) % 10 + 1,
+                    Publisher = $"Sample Publisher {(i - 1) % 5 + 1}",
+                    PublishingDate = new DateTime(2000 + (i % 20), (i - 1) % 12 + 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    ImageUrl = $"https://covers.openlibrary.org/b/isbn/9780000000{i:D3}-L.jpg",
+                    Hall = $"S{(i - 1) % 9 + 1}",
+                    IsAvailableForRental = true,
+                    Description = $"Sample description for book {i}."
+                });
+            }
+
+            builder.HasData(books);
         }
     }
 }
