@@ -2,10 +2,12 @@
 using Maktabaty.Custom_Attributes;
 using Maktabaty.Domain.Entities;
 using Maktabaty.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Maktabaty.Web.Controllers
 {
+    [Authorize]
     public class BookCopiesController : Controller
     {
         private readonly ApplicationDbContext _context;

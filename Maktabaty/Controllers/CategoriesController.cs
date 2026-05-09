@@ -4,11 +4,13 @@ using Maktabaty.Application.ResponseContracts;
 using Maktabaty.Custom_Attributes;
 using Maktabaty.Domain.Entities.Models;
 using Maktabaty.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Maktabaty.Controllers
 {
+    [Authorize]
     public class CategoriesController : Controller
     {
         private readonly ICategoriesService _categoriesService;

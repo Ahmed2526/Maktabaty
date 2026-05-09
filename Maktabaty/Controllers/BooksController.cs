@@ -4,12 +4,14 @@ using Maktabaty.Application.ResponseContracts;
 using Maktabaty.Custom_Attributes;
 using Maktabaty.Domain.Entities.Models;
 using Maktabaty.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Maktabaty.Controllers
 {
+    [Authorize]
     public class BooksController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -166,7 +168,7 @@ namespace Maktabaty.Controllers
                     EditionNumber = bc.EditionNumber,
                     UpdatedOn = bc.UpdatedOn,
                     IsDeleted = bc.IsDeleted,
-                })
+                }).OrderBy(o => o.SerialNumber)
             };
 
             return View(bookResponse);

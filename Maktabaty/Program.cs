@@ -1,6 +1,8 @@
 using Maktabaty.Application.IService;
 using Maktabaty.Application.Services;
+using Maktabaty.Domain.Entities;
 using Maktabaty.Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Maktabaty
@@ -15,6 +17,17 @@ namespace Maktabaty
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            //register identity services
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                    .AddEntityFrameworkStores<ApplicationDbContext>()
+                    .AddDefaultTokenProviders();
+
+            // Configure security stamp validation to check on every request
+            builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                options.ValidationInterval = TimeSpan.Zero;
+            });
 
             // Register Image Service
             builder.Services.AddScoped<IImageService, ImageService>();
@@ -33,6 +46,7 @@ namespace Maktabaty
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();

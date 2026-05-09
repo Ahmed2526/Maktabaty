@@ -1,0 +1,121 @@
+﻿@model CreateUserResponse
+
+@{
+    ViewData["Title"] = "Add User";
+}
+
+@{
+    var action = string.IsNullOrEmpty(Model.Id)
+        ? "Add"
+        : "Edit";
+}
+
+<form method="POST" asp-action="@action">
+
+    <input type="hidden" asp-for="Id" />
+
+    <!-- IMPORTANT -->
+    <!-- server-side validation summary -->
+    <div asp-validation-summary="ModelOnly"
+         class="alert alert-danger mb-4">
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-12 col-xl-12">
+
+            <!-- Username -->
+            <div class="form-floating mb-4">
+
+                <input type="text"
+                       class="form-control"
+                       asp-for="UserName"
+                       placeholder="UserName">
+
+                <label asp-for="UserName"></label>
+
+                <span asp-validation-for="UserName"
+                      class="text-danger mt-2">
+                </span>
+
+            </div>
+
+            <!-- Email -->
+            <div class="form-floating mb-4">
+
+                <input type="text"
+                       class="form-control"
+                       asp-for="Email"
+                       placeholder="Email">
+
+                <label asp-for="Email"></label>
+
+                <span asp-validation-for="Email"
+                      class="text-danger mt-2">
+                </span>
+
+            </div>
+
+            <!-- Phone -->
+            <div class="form-floating mb-4">
+
+                <input type="text"
+                       class="form-control"
+                       asp-for="PhoneNumber"
+                       placeholder="PhoneNumber">
+
+                <label asp-for="PhoneNumber"></label>
+
+                <span asp-validation-for="PhoneNumber"
+                      class="text-danger mt-2">
+                </span>
+
+            </div>
+
+            <!-- Password -->
+            @if (string.IsNullOrEmpty(Model.Id))
+            {
+                <div class="form-floating mb-4">
+
+                    <input type="password"
+                           class="form-control"
+                           asp-for="Password"
+                           placeholder="Password">
+
+                    <label asp-for="Password"></label>
+
+                    <span asp-validation-for="Password"
+                          class="text-danger mt-2">
+                    </span>
+
+                </div>
+            }
+
+            <!-- Roles -->
+            <div class="mb-4">
+
+                <!-- FIXED -->
+                <label asp-for="Roles"
+                       class="mb-3">
+                </label>
+
+                <select class="form-select js-select2"
+                        asp-for="Roles"
+                        asp-items="@Model.SelectRoles"
+                        multiple="multiple">
+
+                    <option></option>
+
+                </select>
+
+                <span asp-validation-for="Roles"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</form>

@@ -1,0 +1,310 @@
+﻿@model RegisterRequest
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en" class="remember-theme">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <title>Register</title>
+
+    <link rel="shortcut icon" href="~/assets/media/favicons/favicon.png">
+
+    <!-- OneUI -->
+    <link rel="stylesheet" id="css-main" href="~/assets/css/oneui.min.css">
+
+    <script src="~/assets/js/setTheme.js"></script>
+
+    <style>
+            .field-validation-valid:empty {
+                display: none;
+            }
+
+            .is-valid {
+                border-color: #198754 !important;
+            }
+
+            .is-invalid {
+                border-color: #dc3545 !important;
+            }
+    </style>
+</head>
+
+<body>
+
+    <div id="page-container">
+
+        <main id="main-container">
+
+            <div class="hero-static d-flex align-items-center">
+
+                <div class="content">
+
+                    <div class="row justify-content-center push">
+
+                        <div class="col-md-8 col-lg-6 col-xl-4">
+
+                            <div class="block block-rounded mb-0">
+
+                                <div class="block-header block-header-default">
+                                    <h3 class="block-title">Create Account</h3>
+                                </div>
+
+                                <div class="block-content">
+
+                                    <div class="p-sm-3 px-lg-4 px-xxl-5 py-lg-5">
+
+                                        <h1 class="h2 mb-1">Maktabaty</h1>
+
+                                        <p class="fw-medium text-muted">
+                                            Please fill the following details to create a new account.
+                                        </p>
+
+                                        <span asp-validation-summary="All" class="text-danger"></span>
+
+                                        <form asp-controller="Account"
+                                              asp-action="Register"
+                                              method="post"
+                                              id="registerForm">
+
+                                            <div class="py-3">
+
+                                                <!-- Username -->
+                                                <div class="mb-4">
+
+                                                    <input asp-for="UserName"
+                                                           class="form-control form-control-lg form-control-alt"
+                                                           placeholder="Username" />
+
+                                                    <span asp-validation-for="UserName"
+                                                          class="text-danger"></span>
+
+                                                </div>
+
+                                                <!-- Email -->
+                                                <div class="mb-4">
+
+                                                    <input asp-for="Email"
+                                                           class="form-control form-control-lg form-control-alt"
+                                                           placeholder="Email" />
+
+                                                    <span asp-validation-for="Email"
+                                                          class="text-danger"></span>
+
+                                                </div>
+
+                                                <!-- Phone -->
+                                                <div class="mb-4">
+
+                                                    <input asp-for="PhoneNumber"
+                                                           class="form-control form-control-lg form-control-alt"
+                                                           placeholder="Phone Number" />
+
+                                                    <span asp-validation-for="PhoneNumber"
+                                                          class="text-danger"></span>
+
+                                                </div>
+
+                                                <!-- Password -->
+                                                <div class="mb-4">
+
+                                                    <div class="input-group">
+
+                                                        <input asp-for="Password"
+                                                               id="Password"
+                                                               type="password"
+                                                               class="form-control form-control-lg form-control-alt"
+                                                               placeholder="Password" />
+
+                                                        <button type="button"
+                                                                class="btn btn-alt-secondary toggle-password"
+                                                                data-target="#Password">
+
+                                                            <i class="fa fa-eye"></i>
+
+                                                        </button>
+
+                                                    </div>
+
+                                                    <span asp-validation-for="Password"
+                                                          class="text-danger"></span>
+
+                                                </div>
+
+                                                <!-- Confirm Password -->
+                                                <div class="mb-4">
+
+                                                    <div class="input-group">
+
+                                                        <input asp-for="ConfirmPassword"
+                                                               id="ConfirmPassword"
+                                                               type="password"
+                                                               class="form-control form-control-lg form-control-alt"
+                                                               placeholder="Confirm Password" />
+
+                                                        <button type="button"
+                                                                class="btn btn-alt-secondary toggle-password"
+                                                                data-target="#ConfirmPassword">
+
+                                                            <i class="fa fa-eye"></i>
+
+                                                        </button>
+
+                                                    </div>
+
+                                                    <span asp-validation-for="ConfirmPassword"
+                                                          class="text-danger"></span>
+
+                                                </div>
+
+                                                <!-- Terms -->
+                                                <div class="mb-4">
+
+                                                    <div class="form-check">
+
+                                                        <input class="form-check-input"
+                                                               required
+                                                               type="checkbox"
+                                                               id="signup-terms" />
+
+                                                        <label class="form-check-label"
+                                                               for="signup-terms">
+
+                                                            I agree to Terms & Conditions
+
+                                                        </label>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <div class="row mb-4">
+
+                                                <div class="col-md-6 col-xl-5">
+
+                                                    <button type="submit"
+                                                            class="btn w-100 btn-alt-success">
+
+                                                        <i class="fa fa-fw fa-plus me-1 opacity-50"></i>
+                                                        Sign Up
+
+                                                    </button>
+
+                                                </div>
+
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="~/assets/js/oneui.app.min.js"></script>
+
+    <script src="~/assets/js/lib/jquery.min.js"></script>
+
+    <script src="~/assets/js/plugins/jquery-validation/jquery.validate.min.js"></script>
+
+    <script src="~/my-libraries/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+
+            $(function () {
+
+                // Toggle Password
+                $('.toggle-password').on('click', function () {
+
+                    let target = $(this).data('target');
+
+                    let input = $(target);
+
+                    let icon = $(this).find('i');
+
+                    if (input.attr('type') === 'password') {
+
+                        input.attr('type', 'text');
+
+                        icon.removeClass('fa-eye')
+                            .addClass('fa-eye-slash');
+
+                    }
+                    else {
+
+                        input.attr('type', 'password');
+
+                        icon.removeClass('fa-eye-slash')
+                            .addClass('fa-eye');
+
+                    }
+
+                });
+
+
+                // Live Validation
+                $('input').on('keyup blur', function () {
+
+                    let input = $(this);
+
+                    input.valid();
+
+                    let validationSpan =
+                        $('[data-valmsg-for="' + input.attr('name') + '"]');
+
+                    if (input.valid()) {
+
+                        input.removeClass('is-invalid')
+                             .addClass('is-valid');
+
+                        validationSpan
+                            .removeClass('field-validation-error')
+                            .addClass('field-validation-valid');
+
+                    }
+                    else {
+
+                        input.removeClass('is-valid')
+                             .addClass('is-invalid');
+
+                        validationSpan
+                            .removeClass('field-validation-valid')
+                            .addClass('field-validation-error');
+
+                    }
+
+                    // revalidate confirm password if password changes
+                    if (input.attr('name') === 'Password') {
+
+                        $('#ConfirmPassword').valid();
+
+                    }
+
+                });
+
+            });
+
+    </script>
+
+</body>
+</html>

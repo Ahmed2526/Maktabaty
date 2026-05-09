@@ -1,0 +1,633 @@
+﻿@model IEnumerable<UserResponse>
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+@section Styles {
+
+    <!-- DataTables -->
+    <link rel="stylesheet"
+          href="~/assets/js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css">
+
+    <!-- Select2 -->
+    <link rel="stylesheet"
+          href="~/assets/js/plugins/select2/css/select2.min.css">
+}
+
+<div class="container card shadow-sm p-3">
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+
+        <h3>Users</h3>
+
+        <a href="javascript:;"
+               onclick="showModalAdd()"
+               class="btn btn-primary d-inline-flex align-items-center">
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="16"
+                 height="16"
+                 fill="currentColor"
+                 class="bi bi-plus-circle me-2"
+                 viewBox="0 0 16 16"
+                 style="vertical-align: middle;">
+
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+
+            </svg>
+
+            Add
+
+        </a>
+
+    </div>
+
+    <hr />
+
+    <table class="table table-bordered table-hover table-vcenter js-dataTable-full">
+
+        <thead>
+
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th class="text-start">Phone Number</th>
+                <th class="text-center">Status</th>
+                <th class="text-center" style="width:180px">Actions</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @foreach (var user in Model)
+            {
+                <tr data-user-id="@user.Id">
+
+                    <td>@user.UserName</td>
+
+                    <td>@user.Email</td>
+
+                    <td class="text-start">@user.PhoneNumber</td>
+
+                    <td class="text-center">
+
+                        @if (user.IsLockedOut)
+                        {
+                            <span class="badge bg-danger">Locked</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+
+                    </td>
+
+                    <td class="text-center">
+
+                        <div class="btn-group">
+
+                            <a href="javascript:;"
+                                   onclick="showModalEdit('@user.Id')"
+                                   class="btn btn-sm btn-alt-secondary">
+
+                                <i class="fa fa-fw fa-pencil-alt"></i>
+
+                            </a>
+
+                            <a href="javascript:;"
+                                   onclick="toggleLockUser('@user.Id')"
+                                   class="btn btn-sm @(user.IsLockedOut ? "btn-alt-danger" : "btn-alt-secondary")">
+
+                                @if (user.IsLockedOut)
+                                {
+                                    <i class="fa fa-fw fa-lock"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-fw fa-unlock"></i>
+                                }
+
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+
+</div>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+
+    <!-- Validation -->
+    <partial name="_ValidationScriptsPartialAjax" />
+
+    <!-- DataTables -->
+    <script src="~/assets/js/plugins/datatables/dataTables.min.js"></script>
+    <script src="~/assets/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/assets/js/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+    <script src="~/assets/js/plugins/datatables-buttons/dataTables.buttons.min.js"></script>
+    <script src="~/assets/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+    <script src="~/assets/js/pages/be_tables_datatables.min.js"></script>
+
+    <!-- Select2 -->
+    <script src="~/assets/js/plugins/select2/js/select2.full.min.js"></script>
+
+    <script>
+
+        var modal = document.querySelector('#Modal');
+
+        var bootstrapModal = new bootstrap.Modal(modal);
+
+        var currentMode = null;
+
+        var currentUserId = null;
+
+        // =========================
+        // ADD USER
+        // =========================
+
+        function showModalAdd() {
+
+            currentMode = 'add';
+
+            currentUserId = null;
+
+            modal.querySelector('.modal-title').textContent = 'Add User';
+
+            $.ajax({
+
+                url: '/Users/Add',
+
+                type: 'GET',
+
+                headers: {
+                    'RequestVerificationToken':
+                        $('input[name="__RequestVerificationToken"]').val()
+                },
+
+                success: function (response) {
+
+                    modal.querySelector('.modal-body').innerHTML = response;
+
+                    var form = modal.querySelector('form');
+
+                    if (form) {
+
+                        $(form).removeData("validator");
+                        $(form).removeData("unobtrusiveValidation");
+
+                        $.validator.unobtrusive.parse(form);
+
+                        initializeSelect2(form);
+                    }
+                },
+
+                error: function () {
+
+                    modal.querySelector('.modal-body').innerHTML =
+                        '<div class="alert alert-danger">' +
+                        'An error occurred while loading the form.' +
+                        '</div>';
+                }
+
+            });
+
+            bootstrapModal.show();
+        }
+
+        // =========================
+        // EDIT USER
+        // =========================
+
+        function showModalEdit(id) {
+
+            currentMode = 'edit';
+
+            currentUserId = id;
+
+            modal.querySelector('.modal-title').textContent = 'Edit User';
+
+            $.ajax({
+
+                url: '/Users/Edit/' + id,
+
+                type: 'GET',
+
+                headers: {
+                    'RequestVerificationToken':
+                        $('input[name="__RequestVerificationToken"]').val()
+                },
+
+                success: function (response) {
+
+                    modal.querySelector('.modal-body').innerHTML = response;
+
+                    var form = modal.querySelector('form');
+
+                    if (form) {
+
+                        $(form).removeData("validator");
+                        $(form).removeData("unobtrusiveValidation");
+
+                        $.validator.unobtrusive.parse(form);
+
+                        initializeSelect2(form);
+                    }
+                },
+
+                error: function () {
+
+                    modal.querySelector('.modal-body').innerHTML =
+                        '<div class="alert alert-danger">' +
+                        'An error occurred while loading the form.' +
+                        '</div>';
+                }
+
+            });
+
+            bootstrapModal.show();
+        }
+
+        // =========================
+        // SELECT2 INIT
+        // =========================
+
+        function initializeSelect2(form) {
+
+            $(form).find('.js-select2')
+                .select2({
+
+                    dropdownParent: $('#Modal'),
+
+                    width: '100%',
+
+                    placeholder: 'Choose Roles',
+
+                    allowClear: true,
+
+                    closeOnSelect: false
+
+                })
+                .on('change', function () {
+
+                    $(this).valid();
+
+                });
+        }
+
+        // =========================
+        // SUBMIT FORM
+        // =========================
+
+        function submitModalForm() {
+
+            var form = modal.querySelector('form');
+
+            if (!form) {
+                return;
+            }
+
+            var $form = $(form);
+
+            if (!$form.valid()) {
+                return;
+            }
+
+            var validator = $form.data('validator');
+
+            if (validator && validator.pendingRequest) {
+
+                setTimeout(function () {
+
+                    submitModalForm();
+
+                }, 100);
+
+                return;
+            }
+
+            var btn = document.querySelector('#modalSaveButton');
+
+            if (btn) {
+
+                btn.classList.add('disabled');
+
+                btn.innerHTML =
+                    '<span class="spinner-border spinner-border-sm"></span> Saving...';
+            }
+
+            var formData = new FormData(form);
+
+            $.ajax({
+
+                url: form.action,
+
+                type: form.method,
+
+                data: formData,
+
+                processData: false,
+
+                contentType: false,
+
+                headers: {
+                    'RequestVerificationToken':
+                        $('input[name="__RequestVerificationToken"]').val()
+                },
+
+                success: function (response) {
+
+                    if (btn) {
+
+                        btn.classList.remove('disabled');
+
+                        btn.innerHTML = 'Save';
+                    }
+
+                    // =========================
+                    // SUCCESS
+                    // =========================
+
+                    if (response.success) {
+
+                        bootstrapModal.hide();
+
+                        var user = response.user;
+
+                        var table = document.querySelector('.js-dataTable-full');
+
+                        var dt = $(table).DataTable();
+
+                        if (currentMode === 'add') {
+
+                            dt.row.add([
+
+                                user.userName,
+
+                                user.email,
+
+                                `<div class="text-start">
+                                    ${user.phoneNumber}
+                                </div>`,
+
+                                `<div class="text-center">
+                                    <span class="badge bg-success">Active</span>
+                                </div>`,
+
+                                `<div class="text-center">
+
+                                    <div class="btn-group">
+
+                                        <a href="javascript:;"
+                                           onclick="showModalEdit('${user.id}')"
+                                           class="btn btn-sm btn-alt-secondary">
+
+                                            <i class="fa fa-fw fa-pencil-alt"></i>
+
+                                        </a>
+
+                                        <a href="javascript:;"
+                                           onclick="toggleLockUser('${user.id}')"
+                                           class="btn btn-sm btn-alt-secondary">
+
+                                            <i class="fa fa-fw fa-unlock"></i>
+
+                                        </a>
+
+                                    </div>
+
+                                </div>`
+
+                            ]).draw(false);
+
+                        }
+                        else if (currentMode === 'edit') {
+
+                            var rowNode =
+                                document.querySelector(
+                                    `tr[data-user-id="${currentUserId}"]`
+                                );
+
+                            if (rowNode) {
+
+                                var rowIndex = dt.row(rowNode).index();
+
+                                dt.row(rowIndex).data([
+
+                                    user.userName,
+
+                                    user.email,
+
+                                    `<div class="text-start">
+                                        ${user.phoneNumber}
+                                    </div>`,
+
+                                    rowNode.querySelector('td:nth-child(4)').innerHTML,
+
+                                    rowNode.querySelector('td:nth-child(5)').innerHTML
+
+                                ]).draw(false);
+                            }
+                        }
+
+                        One.helpers('jq-notify', {
+
+                            type: 'success',
+
+                            icon: 'fa fa-check me-1',
+
+                            message: 'User saved!'
+                        });
+
+                    }
+
+                    // =========================
+                    // SERVER VALIDATION ERROR
+                    // =========================
+
+                    else {
+
+                        modal.querySelector('.modal-body').innerHTML = response;
+
+                        // IMPORTANT
+                        // get NEW form after replacing html
+                        var newForm = modal.querySelector('form');
+
+                        // clear old validator
+                        $(newForm).removeData("validator");
+                        $(newForm).removeData("unobtrusiveValidation");
+
+                        // parse validation again
+                        $.validator.unobtrusive.parse(newForm);
+
+                        // reinitialize select2
+                        initializeSelect2(newForm);
+                    }
+                },
+
+                error: function () {
+
+                    if (btn) {
+
+                        btn.classList.remove('disabled');
+
+                        btn.innerHTML = 'Save';
+                    }
+
+                    modal.querySelector('.modal-body').innerHTML =
+                        '<div class="alert alert-danger">' +
+                        'An error occurred while submitting the form.' +
+                        '</div>';
+                }
+
+            });
+        }
+
+        // =========================
+        // TOGGLE LOCK USER
+        // =========================
+
+        function toggleLockUser(id) {
+
+            Swal.fire({
+
+                title: "Are you sure you want to change user status?",
+
+                showDenyButton: true,
+
+                confirmButtonText: "Yes",
+
+                denyButtonText: "No",
+
+                confirmButtonColor: "#dc3545",
+
+                denyButtonColor: "#6c757d"
+
+            }).then((result) => {
+
+                if (!result.isConfirmed) {
+                    return;
+                }
+
+                $.ajax({
+
+                    url: '/Users/ToggleLockUser/' + id,
+
+                    type: 'POST',
+
+                    headers: {
+                        'RequestVerificationToken':
+                            $('input[name="__RequestVerificationToken"]').val()
+                    },
+
+                    success: function (response) {
+
+                        if (!response.success) {
+                            return;
+                        }
+
+                        var row =
+                            document.querySelector(`tr[data-user-id="${id}"]`);
+
+                        if (row) {
+
+                            var statusCell =
+                                row.querySelector('td:nth-child(4)');
+
+                            var actionButton =
+                                row.querySelector('a[onclick*="toggleLockUser"]');
+
+                            if (response.isLockedOut) {
+
+                                statusCell.innerHTML =
+                                    '<span class="badge bg-danger">Locked</span>';
+
+                                actionButton.innerHTML =
+                                    '<i class="fa fa-fw fa-lock"></i>';
+
+                                actionButton.classList.remove('btn-alt-secondary');
+
+                                actionButton.classList.add('btn-alt-danger');
+
+                            }
+                            else {
+
+                                statusCell.innerHTML =
+                                    '<span class="badge bg-success">Active</span>';
+
+                                actionButton.innerHTML =
+                                    '<i class="fa fa-fw fa-unlock"></i>';
+
+                                actionButton.classList.remove('btn-alt-danger');
+
+                                actionButton.classList.add('btn-alt-secondary');
+                            }
+                        }
+
+                        Swal.fire({
+
+                            icon: 'success',
+
+                            title: response.isLockedOut
+                                ? 'User Locked'
+                                : 'User Unlocked',
+
+                            timer: 1500,
+
+                            showConfirmButton: false
+                        });
+
+                        One.helpers('jq-notify', {
+
+                            type: 'success',
+
+                            icon: 'fa fa-check me-1',
+
+                            message: response.isLockedOut
+                                ? 'User locked successfully.'
+                                : 'User unlocked successfully.'
+                        });
+
+                    },
+
+                    error: function () {
+
+                        Swal.fire({
+
+                            icon: 'error',
+
+                            title: 'Error',
+
+                            text: 'Failed to update user status.'
+                        });
+
+                        One.helpers('jq-notify', {
+
+                            type: 'danger',
+
+                            icon: 'fa fa-times me-1',
+
+                            message: 'Failed to update user status.'
+                        });
+                    }
+
+                });
+
+            });
+        }
+
+    </script>
+}
